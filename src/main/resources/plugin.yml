@@ -1,0 +1,8 @@
+name: StockMarket
+version: 0.1
+main: io.github.NolzCoding.Main
+depend: [Vault]
+api-version: 1.13
+commands:
+  openstock:
+    usage: hello

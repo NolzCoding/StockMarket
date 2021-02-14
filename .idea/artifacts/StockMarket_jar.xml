@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="StockMarket:jar">
+    <output-path>$USER_HOME$/Desktop/Spigot/server-1.16.3/plugins</output-path>
+    <root id="archive" name="StockMarket.jar">
+      <element id="module-output" name="StockMarket" />
+    </root>
+  </artifact>
+</component>

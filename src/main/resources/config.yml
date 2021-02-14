@@ -1,0 +1,10 @@
+#List of stock symbols which will be implemented
+stock-symbols:
+  - "AAPL"
+  - "AMZN"
+  - "ACB"
+  - "GOOGL"
+  - "GME"
+  - "AMC"
+#Finnhub api token
+token-for-api: "c0fceev48v6snrib7nn0"
