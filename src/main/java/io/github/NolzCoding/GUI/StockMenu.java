@@ -21,17 +21,16 @@ import java.util.List;
 
 public class StockMenu extends GUI {
 
-    private StockInfo stockInfo;
-    private HashMap<String, Stock> stockHashMap;
-    private HashMap<GUIs, GUI> guIs;
-    private Main main = Main.getmain();
+    private final HashMap<String, Stock> stockHashMap;
+    private final HashMap<GUIs, GUI> guIs;
     private GUIManager guiManager;
-    private NamespacedKey namespacedKey;
+    private final NamespacedKey namespacedKey;
 
 
     public StockMenu(NamespacedKey namespacedKey, HashMap<GUIs, GUI> guis, GUIManager guiManager) {
         super(InventoryType.CHEST, ChatColor.GREEN + "Stock Menu");
-        stockInfo = main.getStockInfo();
+        Main main = Main.getmain();
+        StockInfo stockInfo = main.getStockInfo();
         stockHashMap = stockInfo.getStocks();
         this.guIs = guis;
         this.namespacedKey = namespacedKey;
@@ -45,6 +44,7 @@ public class StockMenu extends GUI {
             List<String> lores = new ArrayList<>();
             ItemStack i = new ItemStack(Material.PAPER);
             ItemMeta m = i.getItemMeta();
+            assert m != null;
             m.setDisplayName(ChatColor.GREEN + stock.getName());
             lores.add(ChatColor.translateAlternateColorCodes('&', "&7 Symbol: " + stock.getSymbol()));
             lores.add(ChatColor.translateAlternateColorCodes('&', "&7 Price: $" + stock.getPrice()));
@@ -55,22 +55,28 @@ public class StockMenu extends GUI {
             inventory.setItem(index, i);
             index++;
         }
+        inventory.setItem(26, createItem(Material.PLAYER_HEAD, ChatColor.AQUA  + "My stocks", new ArrayList<>()));
         super.openInventory(player);
 
     }
 
     @Override
     public boolean leftClick(Integer slot, Player player, Inventory inventory) {
-            ItemStack itemStack = inventory.getItem(slot);
-            if (itemStack.getType().equals(Material.PAPER)) {
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                if (itemMeta.getPersistentDataContainer().has(namespacedKey, PersistentDataType.STRING)) {
-                    guIs.get(GUIs.INDISTOCKMENU).openInventory(player,
-                            itemMeta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING)
-                    );
-                }
-
+        ItemStack itemStack = inventory.getItem(slot);
+        if (itemStack != null && itemStack.getType().equals(Material.PAPER)) {
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            if (itemMeta != null && itemMeta.getPersistentDataContainer().has(namespacedKey, PersistentDataType.STRING)) {
+                guIs.get(GUIs.INDISTOCKMENU).openInventory(player,
+                        itemMeta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING)
+                );
+                return true;
             }
+        }
+
+        if (slot == 26) {
+            guIs.get(GUIs.MYSTOCKSMENU).openInventory(player);
+        }
+
         return true;
     }
 }

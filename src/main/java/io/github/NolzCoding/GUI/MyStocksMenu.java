@@ -3,6 +3,7 @@ package io.github.NolzCoding.GUI;
 import io.github.NolzCoding.Data.PlayerData;
 import io.github.NolzCoding.Main;
 import io.github.NolzCoding.Utils.GUI;
+import io.github.NolzCoding.Utils.GUIs;
 import io.github.NolzCoding.Utils.Stock;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,10 +23,12 @@ import java.util.UUID;
 public class MyStocksMenu extends GUI {
     private final HashMap<UUID, PlayerData> playerDataHashMap = Main.getmain().getPlayerManager().getPlayerDataHashMap();
     private final HashMap<String, Stock> stockInfo = Main.getmain().getStockInfo().getStocks();
+    private final HashMap<GUIs, GUI> guIs;
     private final NamespacedKey namespacedKey;
-    public MyStocksMenu(NamespacedKey namespacedKey) {
-        super(InventoryType.CHEST, ChatColor.GREEN + "My stocks");
+    public MyStocksMenu(NamespacedKey namespacedKey, HashMap<GUIs, GUI> guIs) {
+        super(InventoryType.CHEST, ChatColor.AQUA + "My stocks");
         this.namespacedKey = namespacedKey;
+        this.guIs = guIs;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class MyStocksMenu extends GUI {
                 List<String> lores = new ArrayList<>();
                 ItemStack i = new ItemStack(Material.PAPER);
                 ItemMeta m = i.getItemMeta();
+                assert m != null;
                 m.setDisplayName(ChatColor.GREEN + stock.getName());
                 lores.add(ChatColor.translateAlternateColorCodes('&', "&7 Symbol: " + stock.getSymbol()));
                 lores.add(ChatColor.translateAlternateColorCodes('&', "&7 Price: $" + stock.getPrice()));
@@ -53,5 +57,20 @@ public class MyStocksMenu extends GUI {
         }
 
         super.openInventory(player);
+    }
+
+    @Override
+    public boolean leftClick(Integer slot, Player player, Inventory inventory) {
+        ItemStack itemStack = inventory.getItem(slot);
+        if (itemStack != null && itemStack.getType().equals(Material.PAPER)) {
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            if (itemMeta != null && itemMeta.getPersistentDataContainer().has(namespacedKey, PersistentDataType.STRING)) {
+                guIs.get(GUIs.INDISTOCKMENU).openInventory(player,
+                        itemMeta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING)
+                );
+                return true;
+            }
+        }
+        return true;
     }
 }

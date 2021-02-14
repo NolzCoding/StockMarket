@@ -1,4 +1,5 @@
 package io.github.NolzCoding;
+
 import io.github.NolzCoding.Commands.CommandManger;
 import io.github.NolzCoding.Data.PlayerData;
 import io.github.NolzCoding.Data.PlayerManager;
@@ -12,25 +13,26 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
     private static final Logger log = Logger.getLogger("Minecraft");
-    private Economy econ = null;
-
     public static String token = "";
+    private static Main main;
+    private Economy econ = null;
     private StockInfo stockInfo;
     private GUIManager guiManager;
     private GetStockInfo getStockInfo;
     private List<String> symbols;
-    private static Main main;
     private CommandManger commandManger;
     private PlayerManager playerManager;
 
@@ -46,7 +48,7 @@ public class Main extends JavaPlugin {
         initEconomy();
         //Commands
         commandManger = new CommandManger();
-        this.getCommand("openstock").setExecutor(commandManger);
+        Objects.requireNonNull(this.getCommand("openstock")).setExecutor(commandManger);
         //Config
         saveDefaultConfig();
         saveConfig();
@@ -114,12 +116,10 @@ public class Main extends JavaPlugin {
     }
 
     private void initEconomy() {
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        else {
+        } else {
             log.severe(String.format("[%s] - Loaded, Vault dependency found!", getDescription().getName()));
         }
     }
@@ -133,7 +133,7 @@ public class Main extends JavaPlugin {
             return false;
         }
         econ = rsp.getProvider();
-        return econ != null;
+        return true;
     }
 
 
@@ -148,7 +148,8 @@ public class Main extends JavaPlugin {
         stockInfo = new StockInfo(hashMap);
         return list;
     }
-//wss://ws.finnhub.io?token=c0fceev48v6snrib7nn0
+
+    //wss://ws.finnhub.io?token=c0fceev48v6snrib7nn0
     private void webSocket() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -162,6 +163,7 @@ public class Main extends JavaPlugin {
         latch.await();
 
     }
+
     public GUIManager getGuiManager() {
         return guiManager;
     }
