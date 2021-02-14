@@ -24,6 +24,7 @@ public class GUIManager {
         guis = new HashMap<>();
         guis.put(GUIs.STOCKMENU, new StockMenu(namespacedKey, guis, this));
         guis.put(GUIs.INDISTOCKMENU, new InvidualStock(this));
+        guis.put(GUIs.MYSTOCKSMENU, new MyStocksMenu(namespacedKey));
     }
 
     public HashMap<GUIs, GUI> getGuis() {
