@@ -21,7 +21,7 @@ public class GetStockInfo {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    public synchronized Float  getCurrentPrice(String sym) {
+    public Float getCurrentPrice(String sym) {
         String uri = "https://finnhub.io/api/v1/quote?symbol=" + sym +"&token=" + Main.token;
 
         HttpRequest request = HttpRequest.newBuilder()
